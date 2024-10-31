@@ -43,6 +43,9 @@ if "%SERVER_IP%"=="" (
 )
 
 
+
+===============================================================================
+
 :: Extract the file name from the file path
 for %%F in ("%FILE_PATH%") do (
     set "FILE_NAME=%%~nxF"
@@ -52,35 +55,38 @@ for %%F in ("%FILE_PATH%") do (
 
 :: Upload the file using SCP
  echo Uploading "%FILE_PATH%" to %SERVER_USER%@%SERVER_IP%:%UPLOAD_DESTINATION%/
- scp -i D:\learnovia.pem "%FILE_PATH%" %SERVER_USER%@%SERVER_IP%:%UPLOAD_DESTINATION%/
+ scp -i %PEM_FILE% "%FILE_PATH%" %SERVER_USER%@%SERVER_IP%:%UPLOAD_DESTINATION%/
 
 
 :: Create a temporary directory on the server
-ssh -i D:\learnovia.pem %SERVER_USER%@%SERVER_IP% "mkdir -p %UPLOAD_DESTINATION%/tmp/"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mkdir -p %UPLOAD_DESTINATION%/tmp/"
 
 :: Check file extension and unarchive accordingly
 if /i "%ARCHIVE_NAME%"==".rar" (
     echo Extracting RAR file...unrar x %UPLOAD_DESTINATION%/%FILE_NAME% %UPLOAD_DESTINATION%/tmp/
-    ssh -i D:\learnovia.pem %SERVER_USER%@%SERVER_IP% "unrar x %UPLOAD_DESTINATION%/%FILE_NAME% %UPLOAD_DESTINATION%/tmp/ > /dev/null 2>&1"
+    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "unrar x %UPLOAD_DESTINATION%/%FILE_NAME% %UPLOAD_DESTINATION%/tmp/ > /dev/null"
 ) else if /i "%ARCHIVE_NAME%"==".zip" (
     echo Extracting ZIP file..."unzip %UPLOAD_DESTINATION%/%FILE_NAME% -d %UPLOAD_DESTINATION%/tmp/"
-    ssh -i D:\learnovia.pem %SERVER_USER%@%SERVER_IP% "unzip %UPLOAD_DESTINATION%/%FILE_NAME% -d %UPLOAD_DESTINATION%/tmp/ > /dev/null 2>&1"
+    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "unzip %UPLOAD_DESTINATION%/%FILE_NAME% -d %UPLOAD_DESTINATION%/tmp/  > /dev/null"
 ) else (
     echo Unsupported file format: %ARCHIVE_NAME%
     exit /b 1
 )
 
+echo Upload and extraction completed successfully.
 
-:: Remove old directories on the server
-ssh -i D:\learnovia.pem %SERVER_USER%@%SERVER_IP% "rm -rf %UPLOAD_DESTINATION%/learnovia"
+:: rename old directories on the server
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mv %UPLOAD_DESTINATION%/learnovia %UPLOAD_DESTINATION%/learnovia_$(date +"%Y-%m-%d)"
 
+:: Restart Nginx
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sudo systemctl restart nginx"
+
+echo old build is removed
 
 :: Move the extracted folder to the final destination
-ssh -i D:\learnovia.pem %SERVER_USER%@%SERVER_IP% "mv %UPLOAD_DESTINATION%/tmp/learnoviaFront %UPLOAD_DESTINATION%/learnovia"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mv %UPLOAD_DESTINATION%/tmp/learnoviaFront %UPLOAD_DESTINATION%/learnovia"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "rm -rf %UPLOAD_DESTINATION%/tmp"
 
-ssh -i D:\learnovia.pem %SERVER_USER%@%SERVER_IP% "rm -rf %UPLOAD_DESTINATION%/tmp"
-
-
-echo Upload and extraction completed successfully.
+echo the uploaded build is running...
 pause
 endlocal
