@@ -12,13 +12,13 @@ if "%~1"=="" (
 
 :: Prompt for front destination
 if "%~2"=="" (
-    set /p "UPLOAD_DESTINATION=Please enter the front project path [default: /schools/SCHOOL_NAME/learnovia-frontend]: "
+    set /p "UPLOAD_DESTINATION=Please enter the front project path [default: SCHOOL_NAME]: "
 ) else (
     set "UPLOAD_DESTINATION=%~2"
 )
     
 :: Append /dist to the upload destination
-set "UPLOAD_DESTINATION=%UPLOAD_DESTINATION%/dist"
+set "UPLOAD_DESTINATION=/schools/%UPLOAD_DESTINATION%/learnovia-frontend/dist"
 
 
 set "PEM_FILE=%~3"
@@ -39,10 +39,8 @@ if "%SERVER_USER%"=="" (
 set "SERVER_IP=%~5"
 if "%SERVER_IP%"=="" (
     set /p "SERVER_IP=Please enter the server IP [default: 98.81.160.170]: "
-    if "%SERVER_IP%"=="" set "SERVER_IP=98.81.160.170"
+    if "%SERVER_IP%"=="" set "SERVER_IP=dev.learnovia.com"
 )
-
-
 
 ===============================================================================
 
@@ -52,11 +50,11 @@ for %%F in ("%FILE_PATH%") do (
     set "ARCHIVE_NAME=%%~xF"  :: Get the file extension
 )
 
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sudo rm -rf %UPLOAD_DESTINATION%/"%ARCHIVE_NAME%"/"
 
 :: Upload the file using SCP
- echo Uploading "%FILE_PATH%" to %SERVER_USER%@%SERVER_IP%:%UPLOAD_DESTINATION%/
- scp -i %PEM_FILE% "%FILE_PATH%" %SERVER_USER%@%SERVER_IP%:%UPLOAD_DESTINATION%/
-
+echo Uploading "%FILE_PATH%" to %SERVER_USER%@%SERVER_IP%:%UPLOAD_DESTINATION%/
+scp -i %PEM_FILE% "%FILE_PATH%" %SERVER_USER%@%SERVER_IP%:%UPLOAD_DESTINATION%/
 
 :: Create a temporary directory on the server
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mkdir -p %UPLOAD_DESTINATION%/tmp/"
@@ -76,17 +74,20 @@ if /i "%ARCHIVE_NAME%"==".rar" (
 echo Upload and extraction completed successfully.
 
 :: rename old directories on the server
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mv %UPLOAD_DESTINATION%/learnovia %UPLOAD_DESTINATION%/learnovia_$(date +"%Y-%m-%d)"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mv %UPLOAD_DESTINATION%/learnovia %UPLOAD_DESTINATION%/learnovia_$(date \"+%%d-%%m-%%Y\")"
+
 
 :: Restart Nginx
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sudo systemctl restart nginx"
 
-echo old build is removed
+echo "old build is renamed"
 
 :: Move the extracted folder to the final destination
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mv %UPLOAD_DESTINATION%/tmp/learnoviaFront %UPLOAD_DESTINATION%/learnovia"
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "rm -rf %UPLOAD_DESTINATION%/tmp"
+:: Move uploaded file to tmp
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mv %UPLOAD_DESTINATION%/%FILE_NAME% /tmp"
 
-echo the uploaded build is running...
+echo "the uploaded build is running..."
 pause
 endlocal
