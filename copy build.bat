@@ -3,21 +3,20 @@ setlocal
 
 :: Prompt for front destination
 if "%~1"=="" (
-    set /p "BRANCH_NAME=Please enter the Branch name: "
+    set /p "FROM_PATH=Please enter the front project path [default: SCHOOL_NAME]: "
 ) else (
-    set "BRANCH_NAME=%~1"
+    set "FROM_PATH=%~1"
 )
-
 
 :: Prompt for front destination
 if "%~2"=="" (
-    set /p "PROJECT_PATH=Please enter the front project path [default: /schools/SCHOOL_NAME/learnovia-backend]: "
+    set /p "TO_PATH=Please enter the TARGET front project path [default: SCHOOL_NAME]: "
 ) else (
-    set "PROJECT_PATH=%~2"
+    set "TO_PATH=%~2"
 )
 
-:: Append /dist to the upload destination
-set "PROJECT_PATH=/schools/%PROJECT_PATH%/learnovia-backend"
+set "FROM_PATH=/schools/%FROM_PATH%/learnovia-frontend/dist"
+set "TO_PATH=/schools/%TO_PATH%/learnovia-frontend/dist"
 
 
 set "PEM_FILE=%~3"
@@ -50,7 +49,7 @@ for %%F in ("%FILE_PATH%") do (
 )
 
 
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git fetch --all --prune && git stash push -m \"Checkout script branch $(git rev-parse --abbrev-ref HEAD)\" && git checkout %BRANCH_NAME% && git reset --hard origin/%BRANCH_NAME%"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sudo mv %TO_PATH%/learnovia %TO_PATH%/learnovia_$(date \"+%%d-%%m-%%Y\") && sudo cp -r %FROM_PATH%/learnovia %TO_PATH%/learnovia"
 	
 
 pause
