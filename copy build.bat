@@ -39,13 +39,6 @@ if not defined SERVER_IP (
 )
 ===============================================================================
 
-:: Extract the file name from the file path
-for %%F in ("%FILE_PATH%") do (
-    set "FILE_NAME=%%~nxF"
-    set "ARCHIVE_NAME=%%~xF"  :: Get the file extension
-)
-
-
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sudo mv %TO_PATH%/learnovia %TO_PATH%/learnovia_$(date \"+%%d-%%m-%%Y\") && sudo cp -r %FROM_PATH%/learnovia %TO_PATH%/learnovia"
 	
 
