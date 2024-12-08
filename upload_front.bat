@@ -13,13 +13,13 @@ if "%~1"=="" (
 
 :: Prompt for front destination
 if "%~2"=="" (
-    set /p "UPLOAD_DESTINATION=Please enter the front project path [default: SCHOOL_NAME]: "
+    set /p "SCHOOL_NAME=Please enter the front project path [default: SCHOOL_NAME]: "
 ) else (
-    set "UPLOAD_DESTINATION=%~2"
+    set "SCHOOL_NAME=%~2"
 )
     
 :: Append /dist to the upload destination
-set "UPLOAD_DESTINATION=/schools/%UPLOAD_DESTINATION%/learnovia-frontend/dist"
+set "UPLOAD_DESTINATION=/schools/%SCHOOL_NAME%/learnovia-frontend/dist"
 
 
 set "PEM_FILE=%~3"
@@ -39,11 +39,11 @@ REM Set SERVER_IP from the 5th argument
 set "SERVER_IP=%~5"
 if not defined SERVER_IP (
     set /p "SERVER_IP=Please enter the server IP [default: 98.81.160.170]: "
-    if "!SERVER_IP!"=="" set "SERVER_IP=dev.learnovia.com"
+    if "!SERVER_IP!"=="" set "SERVER_IP=%SCHOOL_NAME%.learnovia.com"
 )
 
 :: Append .learnovia.com to the server ip
-set "SERVER_IP=%SERVER_IP%.learnovia.com"
+:: set "SERVER_IP=%SERVER_IP%.learnovia.com"
 ===============================================================================
 
 :: Extract the file name from the file path

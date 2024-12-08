@@ -1,5 +1,6 @@
 @echo off
-setlocal
+REM Enable delayed variable expansion
+setlocal enabledelayedexpansion
 
 :: Prompt for front destination
 if "%~1"=="" (
@@ -11,7 +12,7 @@ if "%~1"=="" (
 
 :: Prompt for front destination
 if "%~2"=="" (
-    set /p "PROJECT_PATH=Please enter the front project path [default: /schools/SCHOOL_NAME/learnovia-backend]: "
+    set /p "PROJECT_PATH=Please enter the front project path [SCHOOL_NAME]: "
 ) else (
     set "PROJECT_PATH=%~2"
 )
