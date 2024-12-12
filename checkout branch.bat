@@ -37,17 +37,10 @@ if not defined SERVER_USER (
 REM Set SERVER_IP from the 5th argument
 set "SERVER_IP=%~5"
 if not defined SERVER_IP (
-    set /p "SERVER_IP=Please enter the server IP [default: 98.81.160.170]: "
+    set /p "SERVER_IP=Please enter the server IP [default: dev]: "
     if "!SERVER_IP!"=="" set "SERVER_IP=dev.learnovia.com"
 )
 ===============================================================================
-
-:: Extract the file name from the file path
-for %%F in ("%FILE_PATH%") do (
-    set "FILE_NAME=%%~nxF"
-    set "ARCHIVE_NAME=%%~xF"  :: Get the file extension
-)
-
 
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git fetch --all --prune && git stash push -m \"Checkout script branch $(git rev-parse --abbrev-ref HEAD)\" && git checkout %BRANCH_NAME% && git reset --hard origin/%BRANCH_NAME%"
 	
