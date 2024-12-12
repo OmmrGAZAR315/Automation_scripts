@@ -1,5 +1,6 @@
 @echo off
-setlocal
+REM Enable delayed variable expansion
+setlocal enabledelayedexpansion
 
 :: Prompt for front destination
 if "%~1"=="" (

@@ -63,6 +63,8 @@ if %ERRORLEVEL% NEQ 0 (
 )
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sudo chmod +x %PROJECT_PATH%/create_worktree.sh && sed -i 's/\r$//' %PROJECT_PATH%/create_worktree.sh"
 
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git config --global --add safe.directory $(pwd)"
+
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && sudo ./create_worktree.sh "%PROJECT_PATH%/../worktrees/%BRANCH_NAME%" "%BRANCH_NAME%" "	
 
 pause

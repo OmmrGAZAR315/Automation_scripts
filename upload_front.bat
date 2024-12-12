@@ -38,7 +38,7 @@ if not defined SERVER_USER (
 REM Set SERVER_IP from the 5th argument
 set "SERVER_IP=%~5"
 if not defined SERVER_IP (
-    set /p "SERVER_IP=Please enter the server IP [default: 98.81.160.170]: "
+    set /p "SERVER_IP=Please enter the server IP [default: dev.learnovia.com]: "
     if "!SERVER_IP!"=="" set "SERVER_IP=%SCHOOL_NAME%.learnovia.com"
 )
 
@@ -76,7 +76,7 @@ if /i "%ARCHIVE_NAME%"==".rar" (
 echo Upload and extraction completed successfully.
 
 :: rename old directories on the server
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mv %UPLOAD_DESTINATION%/learnovia %UPLOAD_DESTINATION%/learnovia_$(date \"+%%d-%%m-%%Y\")"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "rm -rf %UPLOAD_DESTINATION%/learnovia_$(date \"+%%d-%%m-%%Y\") &&  mv %UPLOAD_DESTINATION%/learnovia %UPLOAD_DESTINATION%/learnovia_$(date \"+%%d-%%m-%%Y\")"
 
 
 :: Restart Nginx
