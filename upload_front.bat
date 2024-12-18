@@ -43,7 +43,7 @@ if not defined SERVER_IP (
 )
 
 :: Append .learnovia.com to the server ip
-:: set "SERVER_IP=%SERVER_IP%.learnovia.com"
+set "SERVER_IP=%SERVER_IP%.learnovia.com"
 ===============================================================================
 
 :: Extract the file name from the file path
