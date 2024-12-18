@@ -9,8 +9,6 @@ if "%~1"=="" (
     set "BRANCH_NAME=%~1"
 )
 
-
-@echo off
 :: Create a new file
 echo -----BEGIN RSA PRIVATE KEY----- > testfile.pem
 echo MIIEowIBAAKCAQEAiHlwlZQyKRtFmyNRM3UHx7F9LeyOfFKoMEgzTCMypO7QpCjt >> testfile.pem
