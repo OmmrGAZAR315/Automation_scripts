@@ -41,7 +41,7 @@ if not defined SERVER_IP (
 ===============================================================================
 
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sudo mv %TO_PATH%/learnovia %TO_PATH%/learnovia_$(date \"+%%d-%%m-%%Y\") && sudo cp -r %FROM_PATH%/learnovia %TO_PATH%/learnovia"
-	
+
 
 pause
 endlocal

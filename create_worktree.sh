@@ -12,7 +12,7 @@ if [ $? -ne 0 ]; then
     echo "cp tracked files to successfully"
 fi
 
-ln -s $(pwd)/.env "$branch_path"/
+cp $(pwd)/.env "$branch_path"/
 rm -rf "$branch_path"/storage && ln -s $(pwd)/storage "$branch_path"/
 
 cp -R $(pwd)/vendor "$branch_path"/
