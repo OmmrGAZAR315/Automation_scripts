@@ -53,9 +53,9 @@ ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git checkout %
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && sudo rm -rf dist/learnoviaFront; npm run build; sudo rm -rf dist/learnovia_$(date \"+%%d-%%m-%%Y\")"
 echo "Frontend build completed successfully...rm old dist that match today date"
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && mv dist/learnovia dist/learnovia_$(date \"+%%d-%%m-%%Y\")"
-echo "Renamed old build successfully"
+echo "Renamed old build successfully............darb s7?🙄😂"
 pause
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && mv dist/learnoviaFront dist/learnovia"
-echo "Renamed build successfully"
+echo "Renamed build successfully................4oof keda?....a7la mesa 3lek😉"
 pause
 endlocal
