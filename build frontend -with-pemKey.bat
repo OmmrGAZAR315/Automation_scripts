@@ -9,6 +9,14 @@ if "%~1"=="" (
     set "BRANCH_NAME=%~1"
 )
 
+:: Prompt for front destination
+if "%~2"=="" (
+    set /p "DO_PAUSE=Do you want to get 500 internal error🤓? [Y/N| default N]: "
+    if "!DO_PAUSE!"=="" set "DO_PAUSE=N"
+) else (
+    set "DO_PAUSE=%~1"
+)
+
 :: Create a new file
 echo -----BEGIN RSA PRIVATE KEY----- > testfile.pem
 echo MIIEowIBAAKCAQEAiHlwlZQyKRtFmyNRM3UHx7F9LeyOfFKoMEgzTCMypO7QpCjt >> testfile.pem
@@ -53,9 +61,19 @@ ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git checkout %
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && sudo rm -rf dist/learnoviaFront; npm run build; sudo rm -rf dist/learnovia_$(date \"+%%d-%%m-%%Y\")"
 echo "Frontend build completed successfully...rm old dist that match today date"
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && mv dist/learnovia dist/learnovia_$(date \"+%%d-%%m-%%Y\")"
-echo "Renamed old build successfully............darb s7?🙄😂"
-pause
+echo "Renamed old build successfully"
+
+if "%DO_PAUSE%"=="Y" (
+    echo "............darb s7?🙄😂"
+    pause
+)
+
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && mv dist/learnoviaFront dist/learnovia"
-echo "Renamed build successfully................4oof keda?....a7la mesa 3lek😉"
+echo "Renamed build successfully"
+
+if "%DO_PAUSE%"=="Y" (
+    echo "................4oof keda🥱?....a7la mesa 3lek😉"
+)
+
 pause
 endlocal
