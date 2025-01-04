@@ -187,15 +187,20 @@ server {
     location = /robots.txt  { access_log off; log_not_found off; }
     error_page 404 /index.php;
 
-    location ~ \.php$ {
-        fastcgi_pass  unix:/var/run/php/php7.4-fpm.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
-        include       fastcgi_params;
+    # Handle main application paths
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
     }
 
-    location / {
-        try_files \$uri \$uri/ /index.php?\$query_string;
+    # PHP Processing for All PHP Files
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+        fastcgi_index index.php;
+
+        # Use mapped variables for SCRIPT_FILENAME and REQUEST_URI
+        fastcgi_param SCRIPT_FILENAME $script_filename;
+        fastcgi_param REQUEST_URI $request_url;
     }
 
     location ~ /\.(?!well-known).* {
