@@ -4,46 +4,32 @@ setlocal enabledelayedexpansion
 
 
 :: Prompt for file path if not provided
-if "%~1"=="" (
-    set /p "FILE_PATH=Please enter the file path: "
-) else (
-    set "FILE_PATH=%~1"
-)
-
+set /p "FILE_PATH=Please enter the file path: "
 
 :: Prompt for front destination
-if "%~2"=="" (
-    set /p "SCHOOL_NAME=Please enter the front project path [default: SCHOOL_NAME]: "
-) else (
-    set "SCHOOL_NAME=%~2"
-)
-    
-:: Append /dist to the upload destination
-set "UPLOAD_DESTINATION=/schools/%SCHOOL_NAME%/learnovia-frontend/dist"
+set /p "SCHOOL_NAME=Please enter the front project path [default: SCHOOL_NAME]: "
 
+:: prompt for config
+set /p "CUSTOM=DO YOU WANT TO USE CONFIG? [y/n]: "
+if "!CUSTOM!"=="" set "CUSTOM=n"
 
-set "PEM_FILE=%~3"
-if not defined PEM_FILE (
+if /I "!CUSTOM!" == "y" (
     set /p "PEM_FILE=Please enter the PEM file path: "
-    if "!PEM_FILE!"=="" set "PEM_FILE=D:\learnovia.pem"
-)
-
-REM Set SERVER_USER from the 4th argument
-set "SERVER_USER=%~4"
-if not defined SERVER_USER (
     set /p "SERVER_USER=Please enter the server username [default: ubuntu]: "
-    if "!SERVER_USER!"=="" set "SERVER_USER=ubuntu"
-)
-
-REM Set SERVER_IP from the 5th argument
-set "SERVER_IP=%~5"
-if not defined SERVER_IP (
     set /p "SERVER_IP=Please enter the server IP [default: dev.learnovia.com]: "
+
+) else (
+
+    if "!PEM_FILE!"=="" set "PEM_FILE=D:\learnovia.pem"
+    if "!SERVER_USER!"=="" set "SERVER_USER=ubuntu"
     if "!SERVER_IP!"=="" set "SERVER_IP=%SCHOOL_NAME%.learnovia.com"
 )
 
 :: Append .learnovia.com to the server ip
 set "SERVER_IP=%SERVER_IP%.learnovia.com"
+:: Append /dist to the upload destination
+set "UPLOAD_DESTINATION=/schools/%SCHOOL_NAME%/learnovia-frontend/dist"
+
 ===============================================================================
 
 :: Extract the file name from the file path
