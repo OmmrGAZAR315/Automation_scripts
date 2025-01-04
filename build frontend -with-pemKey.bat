@@ -9,6 +9,7 @@ if "%~1"=="" (
     set "BRANCH_NAME=%~1"
 )
 
+chcp 65001 > nul
 :: Prompt for front destination
 if "%~2"=="" (
     set /p "DO_PAUSE=Do you want to get 500 internal error🤓? [Y/N| default N]: "
