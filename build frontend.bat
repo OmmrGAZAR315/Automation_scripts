@@ -3,20 +3,12 @@ REM Enable delayed variable expansion
 setlocal enabledelayedexpansion
 
 :: Prompt for front destination
-if "%~1"=="" (
-    set /p "BRANCH_NAME=Please enter the Branch name: "
-) else (
-    set "BRANCH_NAME=%~1"
-)
+set /p "BRANCH_NAME=Please enter the Branch name: "
 
 chcp 65001 > nul
 :: Prompt for front destination
-if "%~2"=="" (
-    set /p "DO_PAUSE=Do you want to get 500 internal error🤓? [Y/N| default N]: "
-    if "!DO_PAUSE!"=="" set "DO_PAUSE=n"
-) else (
-    set "DO_PAUSE=%~1"
-)
+set /p "DO_PAUSE=Do you want to get 500 internal error🤓? [Y/N| default N]: "
+if "!DO_PAUSE!"=="" set "DO_PAUSE=n"
 
 :: Append /dist to the upload destination
 set "PROJECT_PATH=/schools/dev/learnovia-frontend"
