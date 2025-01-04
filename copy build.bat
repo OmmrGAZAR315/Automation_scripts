@@ -3,41 +3,29 @@ REM Enable delayed variable expansion
 setlocal enabledelayedexpansion
 
 :: Prompt for front destination
-if "%~1"=="" (
-    set /p "FROM_PATH=Please enter the front project path [default: SCHOOL_NAME]: "
-) else (
-    set "FROM_PATH=%~1"
-)
+set /p "FROM_PATH=Please enter the front project path [default: SCHOOL_NAME]: "
 
 :: Prompt for front destination
-if "%~2"=="" (
-    set /p "TO_PATH=Please enter the TARGET front project path [default: SCHOOL_NAME]: "
-) else (
-    set "TO_PATH=%~2"
-)
+set /p "TO_PATH=Please enter the TARGET front project path [default: SCHOOL_NAME]: "
 
 set "FROM_PATH=/schools/%FROM_PATH%/learnovia-frontend/dist"
 set "TO_PATH=/schools/%TO_PATH%/learnovia-frontend/dist"
 
-set "PEM_FILE=%~3"
-if not defined PEM_FILE (
+
+:: prompt for config
+set /p "CUSTOM=DO YOU WANT TO USE CONFIG? [y/n]: "
+if "!CUSTOM!"=="" set "CUSTOM=n"
+
+if /I "!CUSTOM!" == "y" (
     set /p "PEM_FILE=Please enter the PEM file path: "
-    if "!PEM_FILE!"=="" set "PEM_FILE=D:\learnovia.pem"
-)
-
-REM Set SERVER_USER from the 4th argument
-set "SERVER_USER=%~4"
-if not defined SERVER_USER (
     set /p "SERVER_USER=Please enter the server username [default: ubuntu]: "
+    set /p "SERVER_IP=Please enter the server IP [default: dev]: "
+) else (
+    if "!PEM_FILE!"=="" set "PEM_FILE=D:\learnovia.pem"
     if "!SERVER_USER!"=="" set "SERVER_USER=ubuntu"
+    if "!SERVER_IP!"=="" set "SERVER_IP=dev"
 )
-
-REM Set SERVER_IP from the 5th argument
-set "SERVER_IP=%~5"
-if not defined SERVER_IP (
-    set /p "SERVER_IP=Please enter the server IP [default: 98.81.160.170]: "
-    if "!SERVER_IP!"=="" set "SERVER_IP=dev.learnovia.com"
-)
+set "SERVER_IP=%SERVER_IP%.learnovia.com"
 ===============================================================================
 
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sudo mv %TO_PATH%/learnovia %TO_PATH%/learnovia_$(date \"+%%d-%%m-%%Y\") && sudo cp -r %FROM_PATH%/learnovia %TO_PATH%/learnovia"
