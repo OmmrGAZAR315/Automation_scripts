@@ -1,0 +1,15 @@
+# Memory check
+available_mem=$(free -m | awk '/^Mem:/ {print $7}')
+min_mem=1024  # 1 GB in MB
+if [ "$available_mem" -lt "$min_mem" ]; then
+    echo "Error: Not enough memory. Required: 1 GB"
+    exit 1
+fi
+
+# CPU load check
+load=$(awk '{print $1*100}' /proc/loadavg)
+max_load=80  # 80% load threshold
+if [ "$load" -gt "$max_load" ]; then
+    echo "Error: CPU load is too high. Maximum allowed: 80%"
+    exit 1
+fi

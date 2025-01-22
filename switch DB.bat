@@ -5,6 +5,9 @@ setlocal enabledelayedexpansion
 :: Prompt for front destination
 set /p "PROJECT_PATH=Please enter the front project path [SCHOOL_NAME]: "
 
+set /p "SERVER_IP=Please enter the server IP [default: dev]: "
+if "!SERVER_IP!"=="" set "SERVER_IP=dev"
+
 :: prompt for worktree
 set /p "IS_WORKTREE_EXISTS=Is this a worktree? [y/n]: "
 if "!IS_WORKTREE_EXISTS!"=="" set "IS_WORKTREE_EXISTS=n"
@@ -33,13 +36,10 @@ if /I "!CUSTOM!" == "y" (
 
     REM Set SERVER_USER from the 4th argument
     set /p "SERVER_USER=Please enter the server username [default: ubuntu]: "
-
-    set /p "SERVER_IP=Please enter the server IP [default: dev]: "
 ) else (
     if "!DB_PASS!"=="" set "DB_PASS=Learnovia_2025*modern2025"
     if "!PEM_FILE!"=="" set "PEM_FILE=D:\learnovia.pem"
     if "!SERVER_USER!"=="" set "SERVER_USER=ubuntu"
-    if "!SERVER_IP!"=="" set "SERVER_IP=dev"
 )
 
 set "SERVER_IP=%SERVER_IP%.learnovia.com"
