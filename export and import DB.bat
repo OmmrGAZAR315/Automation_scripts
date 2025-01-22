@@ -37,8 +37,12 @@ if "%DB%"=="" (
     pause
     exit
 )
+for /f "tokens=2-3 delims=/- " %%a in ("%date%") do set "DBName=%DB%_%%a_%%b"
+echo %DBName%
+
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mkdir -p /tmp/scripts"
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mysqldump -u root -p%DB_PASS% --ignore-table=%DB%.audit_logs --ignore-table=%DB%.logs %DB% > /tmp/scripts/%DB%.sql"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mysqldump -u root -p%DB_PASS% --ignore-table=%DB%.audit_logs --ignore-table=%DB%.logs %DB% > /tmp/scripts/%DBName%.sql"
+
 if errorlevel 1 (
     echo "Error dumping %DB% database"
     pause
@@ -50,19 +54,20 @@ echo.
 
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "mkdir -p /tmp/scripts"
 
-echo copying %DB%.sql to %SERVER_IP_home%
+echo copying %DBName%.sql to %SERVER_IP_home%
 echo.
 
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "scp -o StrictHostKeyChecking=no -i /home/ubuntu/learnovia.pem %SERVER_USER%@%SERVER_IP_target%:/tmp/scripts/%DB%.sql /tmp/scripts/"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "scp -o StrictHostKeyChecking=no -i /home/ubuntu/learnovia.pem %SERVER_USER%@%SERVER_IP_target%:/tmp/scripts/%DBName%.sql /tmp/scripts/"
 if errorlevel 1 (
-    echo "Error copying %DB%.sql to %SERVER_IP_home%"
+    echo "Error copying %DBName%.sql to %SERVER_IP_home%"
     pause
     exit
 )
 
-echo %DB%.sql copied successfully
+echo %DBName%.sql copied successfully
 echo.
 
+set DB=%DBName%
 echo creating %DB% database
 echo.
 
