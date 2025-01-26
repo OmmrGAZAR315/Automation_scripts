@@ -14,16 +14,18 @@ if /I "!CUSTOM!" == "y" (
     set /p "PEM_FILE=Please enter the PEM file path: "
 
     set /p "SERVER_USER=Please enter the server username [default: ubuntu]: "
+    
+    set /p "SERVER_IP_home=Please enter the server IP [default: dev]: "
 
-) else (
+) 
 
-    if "!DB_PASS!"=="" set "DB_PASS=Learnovia_2025*modern2025"
-    if "!PEM_FILE!"=="" set "PEM_FILE=D:\learnovia.pem"
-    if "!SERVER_USER!"=="" set "SERVER_USER=ubuntu"
-)
+if "!DB_PASS!"==""          set         "DB_PASS=Learnovia_2025*modern2025"
+if "!PEM_FILE!"==""         set         "PEM_FILE=D:\learnovia.pem"
+if "!SERVER_USER!"==""      set         "SERVER_USER=ubuntu"
+if "!SERVER_IP_home!"==""   set         "SERVER_IP_home=dev"
 
 
-set "SERVER_IP_home=dev.learnovia.com"
+set "SERVER_IP_home=%SERVER_IP_home%.learnovia.com"
 set "SERVER_IP_target=%SERVER_IP_target%.learnovia.com"
 ===============================================================================
 
@@ -37,8 +39,16 @@ if "%DB%"=="" (
     pause
     exit
 )
-for /f "tokens=2-3 delims=/- " %%a in ("%date%") do set "DBName=%DB%_%%a_%%b"
+set /p "DBName=edit db sql file name? [skip to use default]: "
+
+if "%DBName%"=="" (
+    set "DBName=%DB%"
+)
+
+for /f "tokens=2-3 delims=/- " %%a in ("%date%") do set "DBName=%DBName%_%%a_%%b"
 echo %DBName%
+
+pause
 
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mkdir -p /tmp/scripts"
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mysqldump -u root -p%DB_PASS% --ignore-table=%DB%.audit_logs --ignore-table=%DB%.logs %DB% > /tmp/scripts/%DBName%.sql"
