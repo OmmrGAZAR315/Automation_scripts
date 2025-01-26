@@ -58,6 +58,9 @@ echo copying %DBName%.sql to %SERVER_IP_home%
 echo.
 
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "scp -o StrictHostKeyChecking=no -i /home/ubuntu/learnovia.pem %SERVER_USER%@%SERVER_IP_target%:/tmp/scripts/%DBName%.sql /tmp/scripts/"
+
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "rm /tmp/scripts/%DBName%.sql"
+
 if errorlevel 1 (
     echo "Error copying %DBName%.sql to %SERVER_IP_home%"
     pause
@@ -81,6 +84,9 @@ echo.
 
 echo importing %DB%.sql to %DB% database
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "mysql -u root -p%DB_PASS% %DB% < /tmp/scripts/%DB%.sql"
+
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "rm /tmp/scripts/%DBName%.sql"
+
 if errorlevel 1 (
     echo "Error copying %DB%.sql to %SERVER_IP_home%"
     pause
