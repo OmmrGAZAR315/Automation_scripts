@@ -50,8 +50,10 @@ echo %DBName%
 
 pause
 
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mkdir -p /tmp/scripts"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mkdir -p /tmp/scripts; rm -rf /tmp/scripts/*"
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mysqldump -u root -p%DB_PASS% --ignore-table=%DB%.audit_logs --ignore-table=%DB%.logs %DB% > /tmp/scripts/%DBName%.sql"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mysqldump -u root -p%DB_PASS% --no-data %DB% jobs failed_jobs > /tmp/scripts/jobs.sql"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "cat /tmp/scripts/jobs.sql >> /tmp/scripts/%DBName%.sql"
 
 if errorlevel 1 (
     echo "Error dumping %DB% database"
@@ -84,7 +86,7 @@ set DB=%DBName%
 echo creating %DB% database
 echo.
 
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "mysql -u root -p%DB_PASS% -e 'CREATE DATABASE %DB%;'"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "mysql -u root -p%DB_PASS% -e 'DROP DATABASE IF EXISTS %DB%; CREATE DATABASE %DB%;'"
 if errorlevel 1 (
     echo "Error copying %DB%.sql to %SERVER_IP_home%"
     pause
