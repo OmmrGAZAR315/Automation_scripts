@@ -14,11 +14,15 @@ if "!DO_PAUSE!"=="" set "DO_PAUSE=n"
 set "PROJECT_PATH=/schools/dev/learnovia-frontend"
 set PEM_FILE="D:\learnovia.pem"
 set SERVER_USER="ubuntu"
-set SERVER_IP="dev.learnovia.com"
+set SERVER_IP="shahadat.learnovia.com"
 ===============================================================================
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git fetch --all --prune && git stash push -m \"Checkout script branch $(git rev-parse --abbrev-ref HEAD)\" "
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git checkout %BRANCH_NAME% && git reset --hard origin/%BRANCH_NAME%"
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && sudo rm -rf dist/learnoviaFront; npm run build; sudo rm -rf dist/learnovia_$(date \"+%%d-%%m-%%Y\")"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && sudo rm -rf dist/learnoviaFront"
+
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && sudo npm run build;"
+
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && sudo rm -rf dist/learnovia_$(date \"+%%d-%%m-%%Y\")"
 echo "Frontend build completed successfully...rm old dist that match today date"
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && mv dist/learnovia dist/learnovia_$(date \"+%%d-%%m-%%Y\")"
 echo "Renamed old build successfully"
