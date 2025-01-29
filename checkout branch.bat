@@ -37,5 +37,9 @@ if "!STASH_POP!"=="y" (
     ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git stash pop"
 )	
 
+if "!BRANCH_NAME!"=="dev_report" (
+    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && if [ \"$CURRENT_BRANCH\" = \"dev_report\" ]; then git pull origin development; fi"
+)
+
 pause
 endlocal
