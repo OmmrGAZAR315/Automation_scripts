@@ -5,9 +5,6 @@ setlocal enabledelayedexpansion
 :: Prompt for front destination
 set /p "PROJECT_PATH=Please enter the front project path [SCHOOL_NAME]: "
 
-set /p "SERVER_IP=Please enter the server IP [default: dev]: "
-if "!SERVER_IP!"=="" set "SERVER_IP=dev"
-
 :: prompt for worktree
 set /p "IS_WORKTREE_EXISTS=Is this a worktree? [y/n]: "
 if "!IS_WORKTREE_EXISTS!"=="" set "IS_WORKTREE_EXISTS=n"
@@ -30,17 +27,16 @@ set /p "CUSTOM=DO YOU WANT TO USE CONFIG? [y/n]: "
 if "!CUSTOM!"=="" set "CUSTOM=n"
 
 if /I "!CUSTOM!" == "y" (
+    set /p "SERVER_IP=Please enter the server IP [default: dev]: "
     set /p "DB_PASS=Please enter db password: "
-
     set /p "PEM_FILE=Please enter the PEM file path: "
-
-    REM Set SERVER_USER from the 4th argument
     set /p "SERVER_USER=Please enter the server username [default: ubuntu]: "
-) else (
-    if "!DB_PASS!"=="" set "DB_PASS=Learnovia_2025*modern2025"
-    if "!PEM_FILE!"=="" set "PEM_FILE=D:\learnovia.pem"
-    if "!SERVER_USER!"=="" set "SERVER_USER=ubuntu"
 )
+
+if "!SERVER_IP!"=="" set "SERVER_IP=dev"
+if "!DB_PASS!"=="" set "DB_PASS=Learnovia_2025*modern2025"
+if "!PEM_FILE!"=="" set "PEM_FILE=D:\learnovia.pem"
+if "!SERVER_USER!"=="" set "SERVER_USER=ubuntu"
 
 set "SERVER_IP=%SERVER_IP%.learnovia.com"
 ===============================================================================
@@ -67,6 +63,8 @@ if "%DB%"=="" (
     exit
 )
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% " sudo sed -i 's/^DB_DATABASE=.*/DB_DATABASE=%DB%/' %PROJECT_PATH%/.env "
+
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && php artisan optimize:clear"
 
 echo Database name changed successfully
 
