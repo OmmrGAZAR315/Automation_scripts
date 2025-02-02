@@ -8,6 +8,8 @@ set /p "BRANCH_NAME=Please enter the Branch name: "
 :: Prompt for front destination
 set /p "PROJECT_PATH=Please enter the front project path [SCHOOL_NAME]: "
 
+set /p "PULL_DEV=pull deve? [y/n]:"
+
 ::promt for stash pop
 set /p "STASH_POP=Do you want to stash pop? [y/n]: "
 if "!STASH_POP!"=="" set "STASH_POP=n"
@@ -39,6 +41,10 @@ if "!STASH_POP!"=="y" (
 
 if "!BRANCH_NAME!"=="dev_report" (
     ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && if [ \"$CURRENT_BRANCH\" = \"dev_report\" ]; then git pull origin development; fi"
+)
+
+if "!PULL_DEV!"=="y" (
+    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git reset --hard && git pull origin development -f && sudo chmod 777 -R $(pwd)"
 )
 
 pause
