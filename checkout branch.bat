@@ -33,6 +33,12 @@ set "PROJECT_PATH=/schools/%PROJECT_PATH%/learnovia-backend"
 set "SERVER_IP=%SERVER_IP%.learnovia.com"
 ===============================================================================
 
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git rev-parse --abbrev-ref HEAD"
+
+if "%BRANCH_NAME%"=="" (
+    set /p "BRANCH_NAME=Please enter the Branch name: "
+)
+
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git fetch --all --prune && git stash push -m \"Checkout script branch $(git rev-parse --abbrev-ref HEAD)\" && git checkout %BRANCH_NAME% && git reset --hard origin/%BRANCH_NAME%"
 
 if "!STASH_POP!"=="y" (
@@ -40,7 +46,21 @@ if "!STASH_POP!"=="y" (
 )	
 
 if "!BRANCH_NAME!"=="dev_report" (
-    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && if [ \"$CURRENT_BRANCH\" = \"dev_report\" ]; then git pull origin development; fi"
+    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && if [ \"$CURRENT_BRANCH\" = \"dev_report\" ]; then git config pull.rebase false; git pull origin development; fi"
+    echo.
+    echo.
+    set /p "PERM_NAME=Please enter the permission name: "
+    if "!PERM_NAME!"=="" (
+        echo "Permission name is required"
+        set /p "PERM_NAME=Please enter the permission name: "
+        echo /!PERM_NAME!/
+    )
+    if not "!PERM_NAME!"=="" (
+        ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "grep 'report_card/.*/first-term' %PROJECT_PATH%/app/Http/Controllers/TermsReportController.php"
+        ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sed -i 's|report_card/.*/first-term|report_card/!PERM_NAME!/first-term|' %PROJECT_PATH%/app/Http/Controllers/TermsReportController.php"
+        ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "grep 'report_card/.*/first-term' %PROJECT_PATH%/app/Http/Controllers/TermsReportController.php"
+        @REM ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% 'sed -i 's|'permission_name' => 'report_card/.*'/|'permission_name' => 'report_card/!PERM_NAME!/|' %PROJECT_PATH%/app/Http/Controllers/EvaluationReportController.php"
+    )
 )
 
 if "!PULL_DEV!"=="y" (

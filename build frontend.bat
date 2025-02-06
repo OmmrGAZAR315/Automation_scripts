@@ -32,7 +32,7 @@ if /I "%DO_PAUSE%"=="Y" (
     pause
 )
 
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && mv dist/learnoviaFront dist/learnovia"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && cp -R dist/learnoviaFront dist/learnovia"
 echo "Renamed build successfully"
 
 if /I "%DO_PAUSE%"=="Y" (
