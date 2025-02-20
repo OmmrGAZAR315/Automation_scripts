@@ -9,6 +9,7 @@ if [ $? -ne 0 ]; then
     git ls-files | xargs -I files cp --parents files "$branch_path"
     cp -R .git "$branch_path"/
     git config --global --add safe.directory "$branch_path"
+    sudo git config --global --add safe.directory "$branch_path"
     echo "cp tracked files to successfully"
 fi
 

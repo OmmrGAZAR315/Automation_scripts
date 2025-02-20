@@ -39,7 +39,7 @@ if "%BRANCH_NAME%"=="" (
     set /p "BRANCH_NAME=Please enter the Branch name: "
 )
 
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git fetch --all --prune && git stash push -m \"Checkout script branch $(git rev-parse --abbrev-ref HEAD)\" && git checkout %BRANCH_NAME% && git reset --hard origin/%BRANCH_NAME%"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git fetch --all --prune && git stash push -m \"Checkout script branch $(git rev-parse --abbrev-ref HEAD)\" && git reset --hard HEAD  && git checkout %BRANCH_NAME% && git reset --hard origin/%BRANCH_NAME%"
 
 if "!STASH_POP!"=="y" (
     ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git stash pop"
@@ -64,7 +64,7 @@ if "!BRANCH_NAME!"=="dev_report" (
 )
 
 if "!PULL_DEV!"=="y" (
-    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git reset --hard && git pull origin development -f && sudo chmod 777 -R $(pwd)"
+    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git reset --hard; git pull origin development -f; git status"
 )
 
 pause
