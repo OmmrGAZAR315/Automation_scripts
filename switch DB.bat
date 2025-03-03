@@ -2,6 +2,7 @@
 REM Enable delayed variable expansion
 setlocal enabledelayedexpansion
 
+echo dev mob front shahadat
 :: Prompt for front destination
 set /p "PROJECT_PATH=Please enter the front project path [SCHOOL_NAME]: "
 
@@ -39,10 +40,34 @@ if "!PEM_FILE!"=="" set "PEM_FILE=D:\learnovia.pem"
 if "!SERVER_USER!"=="" set "SERVER_USER=ubuntu"
 
 set "SERVER_IP=%SERVER_IP%.learnovia.com"
+set "domains=dev mob front shahadat"
 ===============================================================================
 
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mysql -u root -p%DB_PASS% -e 'SHOW DATABASES;'"
 echo.
+set /p "DROP_DB=Do you want to drop the database? [y/n]: "
+if "%DROP_DB%" == "y" (
+   
+
+for %%D in (%domains%) do (
+    set "NEW_PROJECT_PATH=/schools/%%D/learnovia-backend"
+    echo %%D
+    echo.
+    ssh -i %PEM_FILE% -o StrictHostKeyChecking=no %SERVER_USER%@%SERVER_IP% "sudo grep -Po '^DB_DATABASE=\K.*' !NEW_PROJECT_PATH!/.env"
+)
+     set /p "DB_NAME=Please enter the database name: "
+
+    if "!DB_NAME!"=="" (
+        echo "Database name is required"
+        pause
+        exit
+    )
+    if not "!DB_NAME!"=="" (
+        echo Dropping database !DB_NAME! on !SERVER_IP!
+        ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mysql -u root -p%DB_PASS% -e 'DROP DATABASE !DB_NAME!;'"
+        echo Database dropped successfully
+    )
+)
 
 echo server databse selected is:
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sudo grep -Po '^DB_DATABASE=\K.*' %PROJECT_PATH%/.env"
