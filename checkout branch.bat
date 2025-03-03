@@ -41,6 +41,9 @@ if "%BRANCH_NAME%"=="" (
 
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git fetch --all --prune && git stash push -m \"Checkout script branch $(git rev-parse --abbrev-ref HEAD)\" && git reset --hard HEAD  && git checkout %BRANCH_NAME% && git reset --hard origin/%BRANCH_NAME%"
 
+@REM ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && sudo find . -type d \( -name 'vendor' -o -name 'storage' -o -name 'public' -o -name 'override'  \) -prune -o \( -type f -name '*.php' -o -type d \) -exec chmod 757 {} + -exec chown ubuntu:ubuntu {} +;"
+
+
 if "!STASH_POP!"=="y" (
     ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git stash pop"
 )	
