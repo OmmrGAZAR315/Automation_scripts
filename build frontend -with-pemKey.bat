@@ -19,6 +19,16 @@ echo AAAECr4xxEFnooLDHcg6mX+fxvFiPZgKDjQVDf1vKCHHQ23B3GudLpgAmf09PGv/O4ttRK>> te
 echo 5HNt2CBLDUDcQoSFCdFsAAAAF29tbXJfZ2F6emFyQE9tYXItTGVub3ZvAQIDBAUG>> testfile.pem
 echo -----END OPENSSH PRIVATE KEY----->> testfile.pem
 
+icacls "testfile.pem" /inheritance:r
+
+icacls "testfile.pem" /remove:g Everyone
+icacls "testfile.pem" /remove:g SYSTEM
+icacls "testfile.pem" /remove:g Administrators
+icacls "testfile.pem" /remove:g Users
+icacls "testfile.pem" /remove:g "Authenticated Users"
+
+icacls "testfile.pem" /grant:r "%USERNAME%:(F)"
+
 :: Append /dist to the upload destination
 set "PROJECT_PATH=/schools/dev/learnovia-frontend"
 set PEM_FILE="testfile.pem"
