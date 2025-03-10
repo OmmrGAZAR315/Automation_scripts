@@ -197,11 +197,7 @@ server {
         include fastcgi_params;
         fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
         fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-
-        # Use mapped variables for SCRIPT_FILENAME and REQUEST_URI
-        # fastcgi_param SCRIPT_FILENAME $script_filename;
-        # fastcgi_param REQUEST_URI $request_url;
+        fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
     }
 
     location ~ /\.(?!well-known).* {
@@ -215,7 +211,7 @@ server {
        location ~ \.php$ {
             fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
             fastcgi_index index.php;
-           fastcgi_param SCRIPT_FILENAME \$request_filename;
+            fastcgi_param SCRIPT_FILENAME \$request_filename;
             include fastcgi_params;
         }
     }
