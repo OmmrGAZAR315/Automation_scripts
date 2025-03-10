@@ -189,7 +189,7 @@ server {
 
     # Handle main application paths
     location / {
-        try_files $uri $uri/ /index.php?$query_string;
+        try_files \$uri \$uri/ /index.php?\$query_string;
     }
 
     # PHP Processing for All PHP Files
