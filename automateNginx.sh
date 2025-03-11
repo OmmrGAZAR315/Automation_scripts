@@ -189,7 +189,7 @@ server {
 
     # Handle main application paths
     location / {
-        try_files $uri $uri/ /index.php?$query_string;
+        try_files \$uri \$uri/ /index.php?\$query_string;
     }
 
     # PHP Processing for All PHP Files
@@ -198,6 +198,10 @@ server {
         fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
+
+        # Use mapped variables for SCRIPT_FILENAME and REQUEST_URI
+        # fastcgi_param SCRIPT_FILENAME $script_filename;
+        # fastcgi_param REQUEST_URI $request_url;
     }
 
     location ~ /\.(?!well-known).* {
@@ -211,7 +215,7 @@ server {
        location ~ \.php$ {
             fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
             fastcgi_index index.php;
-            fastcgi_param SCRIPT_FILENAME \$request_filename;
+           fastcgi_param SCRIPT_FILENAME \$request_filename;
             include fastcgi_params;
         }
     }
