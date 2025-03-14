@@ -44,7 +44,11 @@ echo "Configuration file created and symlink added: $enabled_file"
 
 certBotDomain(){
     if [ -n "$isCertbotEnabled" ]; then
-        sudo certbot --nginx -d "${1}.learnovia.com"
+        if [ -n "$domain" ]; then
+            sudo certbot --nginx -d "$domain"
+        else
+            sudo certbot --nginx -d "${1}.learnovia.com"
+        fi
     fi
 }
 
