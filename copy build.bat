@@ -28,6 +28,7 @@ if /I "!CUSTOM!" == "y" (
 set "SERVER_IP=%SERVER_IP%.learnovia.com"
 ===============================================================================
 
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "mkdir -p %TO_PATH%"
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "sudo mv %TO_PATH%/learnovia %TO_PATH%/learnovia_$(date \"+%%d-%%m-%%Y\"); sudo cp -r %FROM_PATH%/learnovia %TO_PATH%/learnovia"
 
 
