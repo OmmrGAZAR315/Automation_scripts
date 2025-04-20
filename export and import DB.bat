@@ -19,13 +19,15 @@ if /I "!CUSTOM!" == "y" (
     
     set /p "SERVER_IP_home=Please enter the server IP [default: dev]: "
 
-) 
+) else (
+
+    set "GET_OLD=n"
+)
 
 if "!DB_PASS!"==""          set         "DB_PASS=Learnovia_2025*modern2025"
 if "!PEM_FILE!"==""         set         "PEM_FILE=D:\learnovia.pem"
 if "!SERVER_USER!"==""      set         "SERVER_USER=ubuntu"
 if "!SERVER_IP_home!"==""   set         "SERVER_IP_home=dev"
-if "!GET_OLD!"==""          set         "GET_OLD=n"
 
 set "SERVER_IP_home=%SERVER_IP_home%.learnovia.com"
 set "SERVER_IP_target=%SERVER_IP_target%.learnovia.com"
@@ -39,7 +41,6 @@ set /p "DB=Please enter the database name: "
 if "%DB%"=="" (
     echo "Database name is required"
     pause
-    exit
 )
 set /p "DBName=edit db sql file name? [skip to use default]: "
 
@@ -61,7 +62,6 @@ ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mkdir -p /tmp/scripts; rm -r
     if errorlevel 1 (
         echo "Error dumping %DB% database"
         pause
-        exit
     )
     echo.
     echo %DB% database dumped successfully
@@ -77,34 +77,31 @@ ssh -t -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "rsync -av --progress -e 'ss
 if errorlevel 1 (
     echo "Error copying %DBName%.sql to %SERVER_IP_home%"
     pause
-    exit
 )
 
 echo %DBName%.sql copied successfully
 echo.
-
 set DB=%DBName%
 echo creating %DB% database
 echo.
 
 ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "mysql -u root -p%DB_PASS% -e 'DROP DATABASE IF EXISTS %DB%; CREATE DATABASE %DB%;'"
 if errorlevel 1 (
-    echo "Error copying %DB%.sql to %SERVER_IP_home%"
+    echo "Error importing %DB%.sql to %SERVER_IP_home%"
     pause
-    exit
 )
 echo.
 
 echo importing %DB%.sql to %DB% database
 ssh -t -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "pv /tmp/scripts/%DB%.sql | mysql -u root -p%DB_PASS% %DB%"
 
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "rm /tmp/scripts/%DBName%.sql"
+@REM ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "rm /tmp/scripts/%DBName%.sql"
 
 if errorlevel 1 (
     echo "Error copying %DB%.sql to %SERVER_IP_home%"
     pause
-    exit
 )
+
 echo.
 echo %DB%.sql imported successfully
 echo.
