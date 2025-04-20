@@ -8,6 +8,8 @@ set /p "BRANCH_NAME=Please enter the Branch name: "
 :: Prompt for front destination
 set /p "PROJECT_PATH=Please enter the front project path [SCHOOL_NAME]: "
 
+set /p "remote=Please enter the remote name [origin]: "
+
 set /p "PULL_DEV=pull deve? [y/n]:"
 
 ::promt for stash pop
@@ -27,6 +29,7 @@ if /I "!CUSTOM!" == "y" (
     if "!PEM_FILE!"=="" set "PEM_FILE=D:\learnovia.pem"
     if "!SERVER_USER!"=="" set "SERVER_USER=ubuntu"
     if "!SERVER_IP!"=="" set "SERVER_IP=dev"
+    if "!remote!"=="" set "remote=origin"
 )
 :: Append /dist to the upload destination
 set "PROJECT_PATH=/schools/%PROJECT_PATH%/learnovia-backend"
@@ -39,7 +42,7 @@ if "%BRANCH_NAME%"=="" (
     set /p "BRANCH_NAME=Please enter the Branch name: "
 )
 
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git fetch --all --prune && git stash push -m \"Checkout script branch $(git rev-parse --abbrev-ref HEAD)\" && git reset --hard HEAD  && git checkout %BRANCH_NAME% && git reset --hard origin/%BRANCH_NAME%"
+ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git fetch %remote% %BRANCH_NAME%; git stash push -m \"Checkout script branch $(git rev-parse --abbrev-ref HEAD)\" && git reset --hard HEAD  && git checkout %BRANCH_NAME% && git reset --hard %remote%/%BRANCH_NAME%"
 
 @REM ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && sudo find . -type d \( -name 'vendor' -o -name 'storage' -o -name 'public' -o -name 'override'  \) -prune -o \( -type f -name '*.php' -o -type d \) -exec chmod 757 {} + -exec chown ubuntu:ubuntu {} +;"
 
@@ -49,7 +52,7 @@ if "!STASH_POP!"=="y" (
 )	
 
 if "!BRANCH_NAME!"=="dev_report" (
-    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && if [ \"$CURRENT_BRANCH\" = \"dev_report\" ]; then git config pull.rebase false; git pull origin development; fi"
+    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && if [ \"$CURRENT_BRANCH\" = \"dev_report\" ]; then git config pull.rebase false; git pull %remote% development; fi"
     echo.
     echo.
     set /p "PERM_NAME=Please enter the permission name: "
@@ -67,7 +70,7 @@ if "!BRANCH_NAME!"=="dev_report" (
 )
 
 if "!PULL_DEV!"=="y" (
-    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git reset --hard; git pull origin development -f; git status"
+    ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP% "cd %PROJECT_PATH% && git reset --hard; git pull %remote% development -f; git status"
 )
 
 pause
