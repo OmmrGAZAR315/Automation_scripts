@@ -8,8 +8,8 @@ set /p "FROM_PATH=Please enter the front project path [default: SCHOOL_NAME]: "
 :: Prompt for front destination
 set /p "TO_PATH=Please enter the TARGET front project path [default: SCHOOL_NAME]: "
 
-set "FROM_PATH=/schools/%FROM_PATH%/learnovia-frontend/dist"
-set "TO_PATH=/schools/%TO_PATH%/learnovia-frontend/dist"
+set "FROM_PATH=/schools/%FROM_PATH%/frontend/dist"
+set "TO_PATH=/schools/%TO_PATH%/frontend/dist"
 
 
 :: prompt for config
