@@ -29,21 +29,22 @@ if "!PEM_FILE!"==""         set         "PEM_FILE=D:\learnovia.pem"
 if "!SERVER_USER!"==""      set         "SERVER_USER=ubuntu"
 if "!SERVER_IP_home!"==""   set         "SERVER_IP_home=dev"
 
+set "DB=%SERVER_IP_target%"
 set "SERVER_IP_home=%SERVER_IP_home%.learnovia.com"
 set "SERVER_IP_target=%SERVER_IP_target%.learnovia.com"
 ===============================================================================
 
-ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_target% "mysql -u root -p%DB_PASS% -e 'SHOW DATABASES;'"
+ssh -i %PEM_FILE% -o StrictHostKeyChecking=no %SERVER_USER%@%SERVER_IP_target% "mysql -u root -p%DB_PASS% -e 'SHOW DATABASES;'"
 echo.
-:: Prompt for front destination
-set /p "DB=Please enter the database name: "
 
+echo %DB%
 if "%DB%"=="" (
     echo "Database name is required"
     pause
+    exit 1
 )
-set /p "DBName=edit db sql file name? [skip to use default]: "
 
+set /p "DBName=edit db sql file name? [skip to use default]: "
 if "%DBName%"=="" (
     set "DBName=%DB%"
 )
@@ -94,6 +95,13 @@ echo.
 
 echo importing %DB%.sql to %DB% database
 ssh -t -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "pv /tmp/scripts/%DB%.sql | mysql -u root -p%DB_PASS% %DB%"
+
+if errorlevel 1 (
+    echo "pv command not found, please install pv"
+    ssh -t -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "sudo apt install pv"
+    pause
+)
+echo.
 
 @REM ssh -i %PEM_FILE% %SERVER_USER%@%SERVER_IP_home% "rm /tmp/scripts/%DBName%.sql"
 
