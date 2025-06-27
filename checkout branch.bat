@@ -32,7 +32,7 @@ if /I "!CUSTOM!" == "y" (
     if "!remote!"=="" set "remote=origin"
 )
 :: Append /dist to the upload destination
-set "PROJECT_PATH=/schools/%PROJECT_PATH%/learnovia-backend"
+set "PROJECT_PATH=/schools/%PROJECT_PATH%/backend"
 set "SERVER_IP=%SERVER_IP%.learnovia.com"
 ===============================================================================
 
