@@ -8,7 +8,7 @@ setlocal enabledelayedexpansion
 :: Prompt for front destination
     set /p "PROJECT_PATH=Please enter the backend project path [ex: SCHOOL_NAME]: "
 
-set "PROJECT_PATH=/schools/%PROJECT_PATH%/learnovia-backend"
+set "PROJECT_PATH=/schools/%PROJECT_PATH%/backend"
 
 set /p "REMOVE_WORKTEE=Do you want to remove the worktree? [y/n] [default: n]: "
 if "!REMOVE_WORKTEE!"=="" set "REMOVE_WORKTEE=n"
