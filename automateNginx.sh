@@ -195,7 +195,7 @@ server {
     # PHP Processing for All PHP Files
     location ~ \.php$ {
         include fastcgi_params;
-        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
 
@@ -212,8 +212,9 @@ server {
     index index.php;
     try_files \$uri \$uri/ =404;
 
+
        location ~ \.php$ {
-            fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+            fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
             fastcgi_index index.php;
            fastcgi_param SCRIPT_FILENAME \$request_filename;
             include fastcgi_params;
